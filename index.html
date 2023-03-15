@@ -5,10 +5,20 @@
   <meta charset="UTF-8" />
   <link rel="icon" type="image/svg+xml" href="/vite.svg" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Vite + TS</title>
+  <title>Поиск репозиториев Github</title>
 </head>
 
 <body>
+  <div class="search">
+    <div class="wrap-form">
+      <h1>Поиск репозиториев Github</h1>
+      <form class="search__form" name="search-form" novalidate>
+        <input name="input-query" type="text" placeholder="Введите строку для поиска" required>
+        <button class="search__submit" type="button">Поиск</button>
+      </form>
+    </div>
+  </div>
+
   <script type="module" src="/src/main.ts"></script>
 </body>
 

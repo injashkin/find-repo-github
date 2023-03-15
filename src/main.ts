@@ -1,27 +1,27 @@
 import "./style.css";
-//import typescriptLogo from './typescript.svg'
-//import { setupCounter } from './counter'
 
+document.addEventListener("click", handleClick);
 
+// ====================== Functions ==========================
 
-/*
-document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
-  <div>
-    <a href="https://vitejs.dev" target="_blank">
-      <img src="/vite.svg" class="logo" alt="Vite logo" />
-    </a>
-    <a href="https://www.typescriptlang.org/" target="_blank">
-      <img src="${typescriptLogo}" class="logo vanilla" alt="TypeScript logo" />
-    </a>
-    <h1>Vite + TypeScript</h1>
-    <div class="card">
-      <button id="counter" type="button"></button>
-    </div>
-    <p class="read-the-docs">
-      Click on the Vite and TypeScript logos to learn more
-    </p>
-  </div>
-`
+function handleClick(e: Event) {
+  const target = <HTMLButtonElement>e.target;
 
-setupCounter(document.querySelector<HTMLButtonElement>('#counter')!)
-*/
+  if (target.closest(".search__submit")) {
+    const inputQuery = <HTMLFormElement>target.previousElementSibling;
+
+    const queryString = inputQuery.value;
+
+    console.log(queryString);
+    fetchData();
+  }
+}
+
+async function fetchData() {
+  let url = `https://api.github.com/search/repositories?q=toxin`;
+
+  let response = await fetch(url);
+  
+  let fetchedData = await response.json();
+  console.log(fetchedData);
+}
