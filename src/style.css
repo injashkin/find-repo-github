@@ -31,6 +31,32 @@ body {
   padding: 1rem;
 }
 
+.search__output li {
+  margin-bottom: 1rem;
+}
+
+.search__output li>* {
+  margin-right: 1rem;
+}
+
+.search__lang {
+  background-color: var(--main-color);
+  color: white;
+  padding: 0.1rem 0.7rem;
+  border-radius: 1rem;
+  font-weight: 700;
+}
+
+.search__date::after {
+  content: "";
+  width: 1rem;
+  height: 1rem;
+  background-color: var(--main-color);
+  margin-left: 1rem;
+  padding: 0 0.5rem;
+  transform:  rotateX(30deg)
+}
+
 /*
 @media (prefers-color-scheme: light) {
   :root {
