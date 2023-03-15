@@ -13,10 +13,11 @@
     <div class="wrap-form">
       <h1>Поиск репозиториев Github</h1>
       <form class="search__form" name="search-form" novalidate>
-        <input name="input-query" type="text" placeholder="Введите строку для поиска" required>
+        <input name="input-query" type="text" min="3" placeholder="Введите строку для поиска" required>
         <button class="search__submit" type="button">Поиск</button>
       </form>
     </div>
+    <div class="search__output container"></div>
   </div>
 
   <script type="module" src="/src/main.ts"></script>
