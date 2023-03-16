@@ -65,16 +65,16 @@ function handleKeydown(e: any) {
 function checkForm(form: HTMLFormElement) {
   const { query } = form;
 
-  let isInputQuery = true;
+  let isQuery = true;
 
   if (query.value.length < 3) {
     query.value = "";
     query.placeholder = "Недостаточно символов!";
     query.style.setProperty("--placeholder-color", "red");
-    isInputQuery = false;
+    isQuery = false;
   }
 
-  return isInputQuery;
+  return isQuery;
 }
 
 function getInputValue(target: HTMLButtonElement, inputName: string): string {
@@ -137,11 +137,10 @@ function outputList(data: JSONResponse) {
       stargazers_count,
     } = item;
 
+    // Укорачиваем длинное описание
     if (description && description.length > 200) {
       description = description.slice(0, 200);
     }
-
-    const updated = formatDate(updated_at);
 
     iterable += `
       <tr>
@@ -149,15 +148,15 @@ function outputList(data: JSONResponse) {
           <td>${stargazers_count}</td>
           <td>${language}</td>
           <td>${description}</td>
-          <td>${updated}</td>
+          <td>${formatDate(updated_at)}</td>
       </tr>
     `;
-
-    end = `
-    </tbody>
-    </table>
-    `;
   }
+
+  end = `
+  </tbody>
+  </table>
+  `;
 
   output.innerHTML = start + iterable + end;
 }
@@ -169,7 +168,7 @@ type optionsProp = {
 function getUrl(str: string, options: optionsProp) {
   const { per_page } = validate(options);
 
-  let url = `https://api.github.com/search/repositories?q=${str}&per_page=10`;
+  let url = `https://api.github.com/search/repositories?q=${str}&per_page=${per_page}`;
 
   return url;
 }
@@ -178,7 +177,7 @@ function validate(data: optionsProp) {
   const { per_page } = data;
 
   const result = {
-    per_page: 30,
+    per_page: 0,
     message: { per_page: "" },
   };
 
@@ -186,7 +185,7 @@ function validate(data: optionsProp) {
     result.per_page = 100;
     result.message.per_page =
       "Количество результатов на страницу не может превышать 100";
-  }
+  } else result.per_page = per_page;
 
   return result;
 }
