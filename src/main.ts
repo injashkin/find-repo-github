@@ -10,6 +10,7 @@ type Repo = {
   description: string;
   updated_at: string;
   language: string;
+  stargazers_count: number;
 };
 
 type JSONResponse = {
@@ -18,21 +19,73 @@ type JSONResponse = {
 };
 
 document.addEventListener("click", handleClick);
+document.addEventListener("keydown", handleKeydown);
 
 // ====================== Functions ==========================
 
 function handleClick(e: Event) {
   const target = <HTMLButtonElement>e.target;
+  const form = <HTMLFormElement>target.closest("form");
 
   if (target.closest(".search__submit")) {
-    const inputQuery = <HTMLFormElement>target.previousElementSibling;
-    const queryString = inputQuery.value;
-    const url = getUrl(queryString, options);
-    getAndShow(url);
+    if (!checkForm(form)) return;
+    const query = getInputValue(target, "query");
+    const url = getUrl(query, options);
+    fetchAndShow(url);
   }
 }
 
-async function getAndShow(url: string) {
+function handleKeydown(e: any) {
+  const ev = e as KeyboardEvent;
+  const target = e.target;
+
+  if (ev.code == "Enter" && !ev.shiftKey) {
+    if (target.closest(".search__form")) {
+      const form = <HTMLFormElement>target.closest("form");
+      const submit = <HTMLFormElement>form.querySelector(".search__submit");
+
+      if (!e.repeat) {
+        const newEvent = new Event("click", {
+          bubbles: true,
+          cancelable: true,
+        });
+        submit.dispatchEvent(newEvent);
+        e.preventDefault();
+
+        if (checkForm(form)) {
+          const query = getInputValue(target, "query");
+          const url = getUrl(query, options);
+          fetchAndShow(url);
+        }
+      }
+    }
+  }
+}
+
+function checkForm(form: HTMLFormElement) {
+  const { query } = form;
+
+  let isInputQuery = true;
+
+  if (query.value.length < 3) {
+    query.value = "";
+    query.placeholder = "Недостаточно символов!";
+    query.style.setProperty("--placeholder-color", "red");
+    isInputQuery = false;
+  }
+
+  return isInputQuery;
+}
+
+function getInputValue(target: HTMLButtonElement, inputName: string): string {
+  const form = <HTMLFormElement>target.closest("form");
+  const input = <HTMLFormElement>(
+    form.querySelector(`input[name='${inputName}']`)
+  );
+  return input.value;
+}
+
+async function fetchAndShow(url: string) {
   const fetchedData = await fetchData<JSONResponse>(url);
   outputList(fetchedData);
 }
@@ -51,29 +104,62 @@ function outputList(data: JSONResponse) {
 
   const output = <HTMLElement>document.querySelector(".search__output");
 
-  output.innerHTML = `
-  <div><span>Найдено ${total_count} репозиториев</span></div>
-  <ol>
+  if (!total_count) {
+    output.innerHTML = `<div>Ничего не найдено</div>`;
+    return;
+  }
+
+  const start = `
+  <div class="total-count"><span>Найдено ${total_count} репозиториев</span></div>
+  <table>
+  <thead>
+    <tr>
+      <th title="Имя репозитория">Репозиторий</th>
+      <th title="Количество звезд">Звезды</th>
+      <th title="Язык программирования">Язык</th>
+      <th title="Описание репозитория">Описание</th>
+      <th title="Дата последнего обновления">Обновлено</th>
+    </tr>
+  </thead>
+  <tbody>
   `;
 
+  let iterable = "";
+  let end = "";
+
   for (let item of items) {
-    const { name, html_url, description, updated_at, language } = item;
+    let {
+      name,
+      html_url,
+      description,
+      updated_at,
+      language,
+      stargazers_count,
+    } = item;
+
+    if (description && description.length > 200) {
+      description = description.slice(0, 200);
+    }
 
     const updated = formatDate(updated_at);
 
-    output.innerHTML += `
-    <li>
-      <a title="Имя репозитория" href="${html_url}">${name}</a>
-      <span title="Язык программирования" class="search__lang">${language}</span>
-      <span title="Дата последнего обновления" class="search__date">${updated}</span>
-      <span title="Описания репозитория">${description}</span>
-    </li>
+    iterable += `
+      <tr>
+          <td><a title="Имя репозитория" target="_blank" href="${html_url}">${name}</a></td>
+          <td>${stargazers_count}</td>
+          <td>${language}</td>
+          <td>${description}</td>
+          <td>${updated}</td>
+      </tr>
+    `;
+
+    end = `
+    </tbody>
+    </table>
     `;
   }
 
-  output.innerHTML += `
-  </ol>
-  `;
+  output.innerHTML = start + iterable + end;
 }
 
 type optionsProp = {

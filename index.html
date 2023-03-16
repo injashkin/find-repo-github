@@ -1,26 +1,32 @@
 <!DOCTYPE html>
 <html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Поиск репозиториев Github</title>
+  </head>
 
-<head>
-  <meta charset="UTF-8" />
-  <link rel="icon" type="image/svg+xml" href="/vite.svg" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Поиск репозиториев Github</title>
-</head>
-
-<body>
-  <div class="search">
-    <div class="wrap-form">
-      <h1>Поиск репозиториев Github</h1>
-      <form class="search__form" name="search-form" novalidate>
-        <input name="input-query" type="text" min="3" placeholder="Введите строку для поиска" required>
-        <button class="search__submit" type="button">Поиск</button>
-      </form>
+  <body>
+    <div class="search">
+      <div class="wrap-form">
+        <h1>Поиск репозиториев Github</h1>
+        <form class="search__form" name="form" novalidate>
+          <input
+            name="query"
+            type="text"
+            minlength="3"
+            placeholder="Введите строку для поиска"
+            required
+          />
+          <input class="search__submit" name="submit" type="button" value="Поиск">
+        </form>
+      </div>
+      <div class="search__output-wrapper">
+        <div class="search__output"></div>
+      </div>
     </div>
-    <div class="search__output container"></div>
-  </div>
 
-  <script type="module" src="/src/main.ts"></script>
-</body>
-
+    <script type="module" src="/src/main.ts"></script>
+  </body>
 </html>
